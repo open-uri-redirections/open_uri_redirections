@@ -2,6 +2,8 @@
 
 This gem applies a patch to OpenURI to optionally allow redirections from HTTP to HTTPS, or from HTTPS to HTTP.
 
+This is based on [this patch](http://bugs.ruby-lang.org/issues/859), and modified to allow redirections in both directions.
+
 Here is the problem it tries to solve:
 
     $ irb
