@@ -1,4 +1,4 @@
-# OpenUriRedirections
+# OpenUriRedirections [![Build Status](https://secure.travis-ci.org/jaimeiniesta/open_uri_redirections.png)](http://travis-ci.org/jaimeiniesta/open_uri_redirections)
 
 This gem applies a patch to OpenURI to optionally allow redirections from HTTP to HTTPS, or from HTTPS to HTTP.
 
