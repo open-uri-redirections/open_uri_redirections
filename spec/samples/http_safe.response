@@ -1,0 +1,9 @@
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Date: Mon, 03 Dec 2012 11:36:17 GMT
+Content-Type: text/html
+Content-Length: 178
+Connection: close
+Location: https://safe.com/
+
+Redirecting to https://safe.com/
