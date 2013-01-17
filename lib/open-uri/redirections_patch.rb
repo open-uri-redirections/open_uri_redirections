@@ -18,7 +18,7 @@ module OpenURI
     end
 
     def redirectable_unsafe?(uri1, uri2)
-      !redirectable_safe?(uri1, uri2)
+      redirectable_safe?(uri1, uri2) || (uri1.scheme.downcase == "https" && uri2.scheme.downcase == "http")
     end
   end
 
