@@ -20,56 +20,44 @@ describe "OpenURI" do
 
     end
 
-    describe ":allow_safe_redirections" do
-      it "should allow HTTP => HTTPS redirections when true" do
+    describe ":allow_redirections => :safe" do
+      it "should allow HTTP => HTTPS redirections" do
         expect {
-          open("http://safe.com", :allow_safe_redirections => true)
+          open("http://safe.com", :allow_redirections => :safe)
         }.to_not raise_error
       end
 
-      it "should disallow HTTP => HTTPS redirections when false" do
-        expect {
-          open("http://safe.com", :allow_safe_redirections => false)
-        }.to raise_error(RuntimeError, "redirection forbidden: http://safe.com -> https://safe.com/")
-      end
-
-      it "should follow safe redirection when true" do
-        open("http://safe.com", :allow_safe_redirections => true).read.should == "Hello, this is Safe."
+      it "should follow safe redirection" do
+        open("http://safe.com", :allow_redirections => :safe).read.should == "Hello, this is Safe."
       end
 
       it "should disallow HTTPS => HTTP redirections" do
         expect {
-          open("https://unsafe.com", :allow_safe_redirections => true)
+          open("https://unsafe.com", :allow_redirections => :safe)
         }.to raise_error(RuntimeError, "redirection forbidden: https://unsafe.com -> http://unsafe.com/")
       end
 
     end
 
-    describe ":allow_unsafe_redirections" do
-      it "should allow HTTPS => HTTP redirections when true" do
+    describe ":allow_redirections => :all" do
+      it "should allow HTTPS => HTTP redirections" do
         expect {
-          open("https://unsafe.com", :allow_unsafe_redirections => true)
+          open("https://unsafe.com", :allow_redirections => :all)
         }.to_not raise_error
       end
 
-      it "should allow HTTP => HTTPS redirections when true" do
+      it "should allow HTTP => HTTPS redirections" do
         expect {
-          open("http://safe.com", :allow_unsafe_redirections => true)
+          open("http://safe.com", :allow_redirections => :all)
         }.to_not raise_error
       end
 
-      it "should disallow HTTPS => HTTP redirections when false" do
-        expect {
-          open("https://unsafe.com", :allow_unsafe_redirections => false)
-        }.to raise_error(RuntimeError, "redirection forbidden: https://unsafe.com -> http://unsafe.com/")
+      it "should follow unsafe redirection" do
+        open("https://unsafe.com", :allow_redirections => :all).read.should == "Hello, this is Unsafe."
       end
 
-      it "should follow unsafe redirection when true" do
-        open("https://unsafe.com", :allow_unsafe_redirections => true).read.should == "Hello, this is Unsafe."
-      end
-
-      it "should follow safe redirection when true" do
-        open("http://safe.com", :allow_safe_redirections => true).read.should == "Hello, this is Safe."
+      it "should follow safe redirection" do
+        open("http://safe.com", :allow_redirections => :all).read.should == "Hello, this is Safe."
       end
 
     end

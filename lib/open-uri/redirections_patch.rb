@@ -17,7 +17,7 @@ module OpenURI
       uri1.scheme.downcase == uri2.scheme.downcase || (uri1.scheme.downcase == "http" && uri2.scheme.downcase == "https")
     end
 
-    def redirectable_unsafe?(uri1, uri2)
+    def redirectable_all?(uri1, uri2)
       redirectable_safe?(uri1, uri2) || (uri1.scheme.downcase == "https" && uri2.scheme.downcase == "http")
     end
   end
@@ -25,15 +25,14 @@ module OpenURI
   # The original open_uri takes *args but then doesn't do anything with them.
   # Assume we can only handle a hash.
   def self.open_uri(name, options = {})
-    redirectable_unsafe = options.delete :allow_unsafe_redirections
-    redirectable_safe   = options.delete :allow_safe_redirections
-
-    if redirectable_unsafe
+    allow_redirections = options.delete :allow_redirections
+    
+    if allow_redirections == :all
       class <<self
         remove_method :redirectable?
-        alias_method :redirectable?, :redirectable_unsafe?
+        alias_method :redirectable?, :redirectable_all?
       end
-    elsif redirectable_safe
+    elsif allow_redirections == :safe
       class <<self
         remove_method :redirectable?
         alias_method :redirectable?, :redirectable_safe?
