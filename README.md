@@ -19,13 +19,13 @@ And here is how you can use this patch to follow the redirections:
     => true 
     > require 'open_uri_redirections'
     => true 
-    1.9.2p320 :002 > open('http://github.com', :allow_safe_redirections => true)
+    1.9.2p320 :002 > open('http://github.com', :allow_redirections => :safe)
     => #<File:/var/folders/...>
 
-The patch contained in this gem adds two options to `OpenURI#open`:
+The patch contained in this gem adds the :allow_redirections option to `OpenURI#open`:
 
-* `:allow_safe_redirections` When set to true, it will allow HTTP => HTTPS redirections.
-* `:allow_unsafe_redirections` When set to true, it will allow HTTPS => HTTP redirections.
+* `:allow_redirections => :safe` will allow HTTP => HTTPS redirections.
+* `:allow_redirections => :all` will allow HTTP => HTTPS redirections and HTTP => HTTPS redirections.
 
 ## Understand what you're doing
 
@@ -50,7 +50,7 @@ Add this line to your application's Gemfile:
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 Or install it yourself as:
 
