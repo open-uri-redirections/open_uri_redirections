@@ -25,7 +25,7 @@ And here is how you can use this patch to follow the redirections:
 The patch contained in this gem adds the :allow_redirections option to `OpenURI#open`:
 
 * `:allow_redirections => :safe` will allow HTTP => HTTPS redirections.
-* `:allow_redirections => :all` will allow HTTP => HTTPS redirections and HTTP => HTTPS redirections.
+* `:allow_redirections => :all`  will allow HTTP => HTTPS redirections and HTTPS => HTTP redirections.
 
 ## Understand what you're doing
 

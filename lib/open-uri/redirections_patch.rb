@@ -22,25 +22,31 @@ module OpenURI
     end
   end
 
+  # Patches the original open_uri method to accept the :allow_redirections option
+  #
+  # :allow_redirections => :safe will allow HTTP => HTTPS redirections.
+  # :allow_redirections => :all  will allow HTTP => HTTPS and HTTPS => HTTP redirections.
+  #
   # The original open_uri takes *args but then doesn't do anything with them.
   # Assume we can only handle a hash.
   def self.open_uri(name, options = {})
     allow_redirections = options.delete :allow_redirections
-    
-    if allow_redirections == :all
+
+    case allow_redirections
+    when :safe
       class <<self
         remove_method :redirectable?
-        alias_method :redirectable?, :redirectable_all?
+        alias_method  :redirectable?, :redirectable_safe?
       end
-    elsif allow_redirections == :safe
+    when :all
       class <<self
         remove_method :redirectable?
-        alias_method :redirectable?, :redirectable_safe?
+        alias_method  :redirectable?, :redirectable_all?
       end
     else
       class <<self
         remove_method :redirectable?
-        alias_method :redirectable?, :redirectable_cautious?
+        alias_method  :redirectable?, :redirectable_cautious?
       end
     end
 
