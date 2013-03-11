@@ -34,6 +34,12 @@ describe "OpenURI" do
       it "should follow safe redirections" do
         open("http://safe.com", :allow_redirections => :safe).read.should == "Hello, this is Safe."
       end
+
+      it "should follow safe redirections with block" do
+        expect { |b| 
+          open("http://safe.com", :allow_redirections => :safe, &b)
+        }.to yield_control
+      end
     end
 
     describe ":allow_redirections => :all" do
@@ -55,6 +61,18 @@ describe "OpenURI" do
 
       it "should follow unsafe redirections" do
         open("https://unsafe.com", :allow_redirections => :all).read.should == "Hello, this is Unsafe."
+      end
+
+      it "should follow safe redirections with block" do
+        expect { |b| 
+          open("http://safe.com", :allow_redirections => :all, &b)
+        }.to yield_control
+      end
+
+      it "should follow unsafe redirections with block" do
+        expect { |b| 
+          open("https://unsafe.com", :allow_redirections => :all, &b)
+        }.to yield_control
       end
     end
   end
