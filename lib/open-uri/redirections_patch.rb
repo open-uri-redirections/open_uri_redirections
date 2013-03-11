@@ -29,7 +29,7 @@ module OpenURI
   #
   # The original open_uri takes *args but then doesn't do anything with them.
   # Assume we can only handle a hash.
-  def self.open_uri(name, options = {})
+  def self.open_uri(name, options = {}, &block)
     allow_redirections = options.delete :allow_redirections
 
     case allow_redirections
@@ -50,6 +50,6 @@ module OpenURI
       end
     end
 
-    self.open_uri_original name, options
+    self.open_uri_original name, options, &block
   end
 end
