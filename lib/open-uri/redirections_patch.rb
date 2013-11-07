@@ -31,27 +31,24 @@ module OpenURI
   # Assume we can only handle a hash.
   def self.open_uri(name, *rest, &block)
     mode, _, rest = OpenURI.scan_open_optional_arguments(*rest)
-    options = rest.shift if !rest.empty? && Hash === rest.first
+    options = rest.first if !rest.empty? && Hash === rest.first
 
-    if options
-      allow_redirections = options.delete :allow_redirections
-
-      case allow_redirections
-      when :safe
-        class <<self
-          remove_method :redirectable?
-          alias_method  :redirectable?, :redirectable_safe?
-        end
-      when :all
-        class <<self
-          remove_method :redirectable?
-          alias_method  :redirectable?, :redirectable_all?
-        end
-      else
-        class <<self
-          remove_method :redirectable?
-          alias_method  :redirectable?, :redirectable_cautious?
-        end
+    allow_redirections = options.delete :allow_redirections if options
+    case allow_redirections
+    when :safe
+      class << self
+        remove_method :redirectable?
+        alias_method  :redirectable?, :redirectable_safe?
+      end
+    when :all
+      class << self
+        remove_method :redirectable?
+        alias_method  :redirectable?, :redirectable_all?
+      end
+    else
+      class << self
+        remove_method :redirectable?
+        alias_method  :redirectable?, :redirectable_cautious?
       end
     end
 
