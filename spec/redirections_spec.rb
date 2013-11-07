@@ -75,5 +75,19 @@ describe "OpenURI" do
         }.to yield_control
       end
     end
+
+    describe "with mode argument" do
+      it "should disallow HTTP => HTTPS redirections" do
+        expect {
+          open("http://safe.com", 'r')
+        }.to raise_error(RuntimeError, "redirection forbidden: http://safe.com -> https://safe.com/")
+      end
+
+      it "should allow HTTP => HTTPS redirections" do
+        expect {
+          open("http://safe.com", 'r', :allow_redirections => :safe)
+        }.to_not raise_error
+      end
+    end
   end
 end
