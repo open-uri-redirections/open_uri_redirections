@@ -29,27 +29,29 @@ module OpenURI
   #
   # The original open_uri takes *args but then doesn't do anything with them.
   # Assume we can only handle a hash.
-  def self.open_uri(name, options = {}, &block)
-    allow_redirections = options.delete :allow_redirections
+  def self.open_uri(name, *rest, &block)
+    mode, _, rest = OpenURI.scan_open_optional_arguments(*rest)
+    options = rest.first if !rest.empty? && Hash === rest.first
 
+    allow_redirections = options.delete :allow_redirections if options
     case allow_redirections
     when :safe
-      class <<self
+      class << self
         remove_method :redirectable?
         alias_method  :redirectable?, :redirectable_safe?
       end
     when :all
-      class <<self
+      class << self
         remove_method :redirectable?
         alias_method  :redirectable?, :redirectable_all?
       end
     else
-      class <<self
+      class << self
         remove_method :redirectable?
         alias_method  :redirectable?, :redirectable_cautious?
       end
     end
 
-    self.open_uri_original name, options, &block
+    self.open_uri_original name, *rest, &block
   end
 end
