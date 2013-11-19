@@ -8,7 +8,7 @@ Here is the problem it tries to solve:
 
     $ irb
     1.9.2p320 :001 > require 'open-uri'
-    => true 
+    => true
     1.9.2p320 :002 > open('http://github.com')
     RuntimeError: redirection forbidden: http://github.com -> https://github.com/
 
@@ -16,9 +16,9 @@ And here is how you can use this patch to follow the redirections:
 
     $ irb
     1.9.2p320 :001 > require 'open-uri'
-    => true 
+    => true
     > require 'open_uri_redirections'
-    => true 
+    => true
     1.9.2p320 :002 > open('http://github.com', :allow_redirections => :safe)
     => #<File:/var/folders/...>
 
