@@ -76,17 +76,23 @@ describe "OpenURI" do
       end
     end
 
-    describe "with mode argument" do
+    describe "passing arguments down the stack" do
       it "should disallow HTTP => HTTPS redirections" do
         expect {
-          open("http://safe.com", 'r')
+          open("http://safe.com", 'r', 0444, "User-Agent" => "Mozilla/5.0")
         }.to raise_error(RuntimeError, "redirection forbidden: http://safe.com -> https://safe.com/")
       end
 
       it "should allow HTTP => HTTPS redirections" do
         expect {
-          open("http://safe.com", 'r', :allow_redirections => :safe)
+          open("http://safe.com", 'r', 0444, "User-Agent" => "Mozilla/5.0", :allow_redirections => :safe)
         }.to_not raise_error
+      end
+
+      it "should pass the arguments down the stack" do
+        OpenURI.should_receive(:open_uri_original).with(an_instance_of(URI::HTTP), "r", 0444, { "User-Agent" => "Mozilla/5.0" })
+
+        open("http://safe.com", 'r', 0444, "User-Agent" => "Mozilla/5.0", :allow_redirections => :safe)
       end
     end
   end
