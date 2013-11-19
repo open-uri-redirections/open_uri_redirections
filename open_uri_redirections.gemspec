@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{OpenURI patch to allow redirections between HTTP and HTTPS}
   gem.summary       = %q{OpenURI patch to allow redirections between HTTP and HTTPS}
   gem.homepage      = "https://github.com/jaimeiniesta/open_uri_redirections"
+  gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($/)
   gem.test_files    = gem.files.grep(%r{^(spec)/})
