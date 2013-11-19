@@ -27,11 +27,8 @@ module OpenURI
   # :allow_redirections => :safe will allow HTTP => HTTPS redirections.
   # :allow_redirections => :all  will allow HTTP => HTTPS and HTTPS => HTTP redirections.
   #
-  # The original open_uri takes *args but then doesn't do anything with them.
-  # Assume we can only handle a hash.
   def self.open_uri(name, *rest, &block)
-    mode, _, rest = OpenURI.scan_open_optional_arguments(*rest)
-    options = rest.first if !rest.empty? && Hash === rest.first
+    options = self.first_hash_argument(rest)
 
     allow_redirections = options.delete :allow_redirections if options
     case allow_redirections
@@ -53,5 +50,16 @@ module OpenURI
     end
 
     self.open_uri_original name, *rest, &block
+  end
+
+  private
+
+  # OpenURI::open can receive different kinds of arguments, like a string for the mode
+  # or an integer for the permissions, and then a hash with options like UserAgent, etc.
+  #
+  # This method helps us find this options hash, as it is where our :allow_redirections
+  # option will reside.
+  def self.first_hash_argument(arguments)
+    arguments.select {|arg| Hash === arg}.first
   end
 end
