@@ -6,21 +6,25 @@ This is based on [this patch](http://bugs.ruby-lang.org/issues/859), and modifie
 
 Here is the problem it tries to solve:
 
-    $ irb
-    1.9.2p320 :001 > require 'open-uri'
-    => true
-    1.9.2p320 :002 > open('http://github.com')
-    RuntimeError: redirection forbidden: http://github.com -> https://github.com/
+```sh
+$ irb
+1.9.2p320 :001 > require 'open-uri'
+=> true
+1.9.2p320 :002 > open('http://github.com')
+RuntimeError: redirection forbidden: http://github.com -> https://github.com/
+```    
 
 And here is how you can use this patch to follow the redirections:
 
-    $ irb
-    1.9.2p320 :001 > require 'open-uri'
-    => true
-    > require 'open_uri_redirections'
-    => true
-    1.9.2p320 :002 > open('http://github.com', :allow_redirections => :safe)
-    => #<File:/var/folders/...>
+```sh
+$ irb
+1.9.2p320 :001 > require 'open-uri'
+=> true
+> require 'open_uri_redirections'
+=> true
+1.9.2p320 :002 > open('http://github.com', :allow_redirections => :safe)
+=> #<File:/var/folders/...>
+```    
 
 The patch contained in this gem adds the :allow_redirections option to `OpenURI#open`:
 
@@ -50,11 +54,15 @@ Add this line to your application's Gemfile:
 
 And then execute:
 
-    $ bundle install
+```sh
+$ bundle install
+```    
 
 Or install it yourself as:
 
-    $ gem install open_uri_redirections
+```sh
+$ gem install open_uri_redirections
+```
 
 ## Contributing
 
