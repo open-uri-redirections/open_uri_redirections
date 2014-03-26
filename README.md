@@ -39,7 +39,7 @@ Before using this gem, read this:
 [https://gist.github.com/1271420](https://gist.github.com/1271420)
 
 ### Relevant issue:
-[http://redmine.ruby-lang.org/issues/3719](http://redmine.ruby-lang.org/issues/3719)
+[https://bugs.ruby-lang.org/issues/3719](https://bugs.ruby-lang.org/issues/3719)
 
 ### Source here:
 [https://github.com/ruby/ruby/blob/trunk/lib/open-uri.rb](https://github.com/ruby/ruby/blob/trunk/lib/open-uri.rb)
