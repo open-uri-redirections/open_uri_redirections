@@ -7,14 +7,33 @@
 #
 # Source here:
 # https://github.com/ruby/ruby/blob/trunk/lib/open-uri.rb
+#
+# Thread-safe implementation adapted from:
+# https://github.com/obfusk/open_uri_w_redirect_to_https
 
 module OpenURI
   class <<self
     alias_method :open_uri_original, :open_uri
     alias_method :redirectable_cautious?, :redirectable?
 
+    def redirectable?(uri1, uri2)
+      allow_redirections = Thread.current[:__open_uri_redirections__]
+
+      # clear to prevent leaking (e.g. to block)
+      Thread.current[:__open_uri_redirections__] = nil
+
+      case allow_redirections
+      when :safe
+        redirectable_safe? uri1, uri2
+      when :all
+        redirectable_all? uri1, uri2
+      else
+        redirectable_cautious? uri1, uri2
+      end
+    end
+
     def redirectable_safe?(uri1, uri2)
-      uri1.scheme.downcase == uri2.scheme.downcase || (uri1.scheme.downcase == "http" && uri2.scheme.downcase == "https")
+      redirectable_cautious?(uri1, uri2) || (uri1.scheme.downcase == "http" && uri2.scheme.downcase == "https")
     end
 
     def redirectable_all?(uri1, uri2)
@@ -29,27 +48,15 @@ module OpenURI
   #
   def self.open_uri(name, *rest, &block)
     options = self.first_hash_argument(rest)
-
     allow_redirections = options.delete :allow_redirections if options
-    case allow_redirections
-    when :safe
-      class << self
-        remove_method :redirectable?
-        alias_method  :redirectable?, :redirectable_safe?
-      end
-    when :all
-      class << self
-        remove_method :redirectable?
-        alias_method  :redirectable?, :redirectable_all?
-      end
-    else
-      class << self
-        remove_method :redirectable?
-        alias_method  :redirectable?, :redirectable_cautious?
-      end
-    end
+    Thread.current[:__open_uri_redirections__] = allow_redirections
 
-    self.open_uri_original name, *rest, &block
+    begin
+      self.open_uri_original name, *rest, &block
+    ensure
+      # clear (redirectable? might not be called due to an exception)
+      Thread.current[:__open_uri_redirections__] = nil
+    end
   end
 
   private
