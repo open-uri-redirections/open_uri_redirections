@@ -36,7 +36,9 @@ describe "OpenURI" do
       end
 
       it "should follow safe redirections" do
-        open("http://safe.com", :allow_redirections => :safe).read.should == "Hello, this is Safe."
+        expect(
+          open("http://safe.com", :allow_redirections => :safe).read
+        ).to eq("Hello, this is Safe.")
       end
 
       it "should follow safe redirections with block" do
@@ -60,11 +62,15 @@ describe "OpenURI" do
       end
 
       it "should follow safe redirections" do
-        open("http://safe.com", :allow_redirections => :all).read.should == "Hello, this is Safe."
+        expect(
+          open("http://safe.com", :allow_redirections => :all).read
+        ).to eq("Hello, this is Safe.")
       end
 
       it "should follow unsafe redirections" do
-        open("https://unsafe.com", :allow_redirections => :all).read.should == "Hello, this is Unsafe."
+        expect(
+          open("https://unsafe.com", :allow_redirections => :all).read
+        ).to eq("Hello, this is Unsafe.")
       end
 
       it "should follow safe redirections with block" do
@@ -94,7 +100,7 @@ describe "OpenURI" do
       end
 
       it "should pass the arguments down the stack" do
-        OpenURI.should_receive(:open_uri_original).with(an_instance_of(URI::HTTP), "r", 0444, { "User-Agent" => "Mozilla/5.0" })
+        expect(OpenURI).to receive(:open_uri_original).with(an_instance_of(URI::HTTP), "r", 0444, { "User-Agent" => "Mozilla/5.0" })
 
         open("http://safe.com", 'r', 0444, "User-Agent" => "Mozilla/5.0", :allow_redirections => :safe)
       end
