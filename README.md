@@ -2,7 +2,7 @@
 
 This gem applies a patch to OpenURI to optionally allow redirections from HTTP to HTTPS, or from HTTPS to HTTP.
 
-This is based on [this patch](http://bugs.ruby-lang.org/issues/859), and modified to allow redirections in both directions.
+This is based on [this patch](http://bugs.ruby-lang.org/issues/859) and [this gem](https://github.com/obfusk/open_uri_w_redirect_to_https), and modified to allow redirections in both directions.
 
 Here is the problem it tries to solve:
 
@@ -12,7 +12,7 @@ $ irb
 => true
 1.9.2p320 :002 > open('http://github.com')
 RuntimeError: redirection forbidden: http://github.com -> https://github.com/
-```    
+```
 
 And here is how you can use this patch to follow the redirections:
 
@@ -24,7 +24,7 @@ $ irb
 => true
 1.9.2p320 :002 > open('http://github.com', :allow_redirections => :safe)
 => #<File:/var/folders/...>
-```    
+```
 
 The patch contained in this gem adds the :allow_redirections option to `OpenURI#open`:
 
@@ -44,6 +44,9 @@ Before using this gem, read this:
 ### Source here:
 [https://github.com/ruby/ruby/blob/trunk/lib/open-uri.rb](https://github.com/ruby/ruby/blob/trunk/lib/open-uri.rb)
 
+### Thread-safe implementation adapted from this gem:
+[https://github.com/obfusk/open_uri_w_redirect_to_https](https://github.com/obfusk/open_uri_w_redirect_to_https)
+
 Use it at your own risk!
 
 ## Installation
@@ -56,7 +59,7 @@ And then execute:
 
 ```sh
 $ bundle install
-```    
+```
 
 Or install it yourself as:
 

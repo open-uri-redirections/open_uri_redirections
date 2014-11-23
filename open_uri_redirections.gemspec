@@ -6,7 +6,7 @@ require 'open_uri_redirections/version'
 Gem::Specification.new do |gem|
   gem.name          = "open_uri_redirections"
   gem.version       = OpenUriRedirections::VERSION
-  gem.authors       = ["Jaime Iniesta", "Gabriel Cebrian"]
+  gem.authors       = ["Jaime Iniesta", "Gabriel Cebrian", "Felix C. Stegerman"]
   gem.email         = ["jaimeiniesta@gmail.com"]
   gem.description   = %q{OpenURI patch to allow redirections between HTTP and HTTPS}
   gem.summary       = %q{OpenURI patch to allow redirections between HTTP and HTTPS}
