@@ -2,6 +2,10 @@
 
 require File.join(File.dirname(__FILE__), "/spec_helper")
 
+class << OpenURI
+  alias_method :open_uri_original__, :open_uri_original
+end
+
 describe "OpenURI" do
   describe "#open" do
     describe "Default settings" do
@@ -93,6 +97,40 @@ describe "OpenURI" do
         OpenURI.should_receive(:open_uri_original).with(an_instance_of(URI::HTTP), "r", 0444, { "User-Agent" => "Mozilla/5.0" })
 
         open("http://safe.com", 'r', 0444, "User-Agent" => "Mozilla/5.0", :allow_redirections => :safe)
+      end
+    end
+
+    describe "threads" do
+      it "works" do
+        allow(OpenURI).to receive(:open_uri_original) { |*a,&b| sleep rand; OpenURI.open_uri_original__ *a, &b }
+        ts = []
+        Thread.abort_on_exception = true
+        begin
+          100.times {
+            ts << Thread.new {
+              expect {
+                open("http://safe.com")
+              }.to raise_error(RuntimeError, "redirection forbidden: http://safe.com -> https://safe.com/")
+            }
+            ts << Thread.new {
+              expect {
+                open("http://safe.com", :allow_redirections => :safe)
+              }.to_not raise_error
+            }
+            ts << Thread.new {
+              expect {
+                open("https://unsafe.com")
+              }.to raise_error(RuntimeError, "redirection forbidden: https://unsafe.com -> http://unsafe.com/")
+            }
+            ts << Thread.new {
+              expect {
+                open("https://unsafe.com", :allow_redirections => :safe)
+              }.to raise_error(RuntimeError, "redirection forbidden: https://unsafe.com -> http://unsafe.com/")
+            }
+          }
+        ensure
+          ts.each(&:join)
+        end
       end
     end
   end
