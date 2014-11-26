@@ -41,6 +41,12 @@ describe "OpenURI" do
         ).to eq("Hello, this is Safe.")
       end
 
+      it "should follow safe double redirections" do
+        expect(
+          open("http://safe2.com", :allow_redirections => :safe).read
+        ).to eq("Hello, this is Safe.")
+      end
+
       it "should follow safe redirections with block" do
         expect { |b|
           open("http://safe.com", :allow_redirections => :safe, &b)
@@ -107,7 +113,7 @@ describe "OpenURI" do
     end
 
     describe "threads" do
-      it "works" do
+      it "seems to work (could be false positive)" do
         allow(OpenURI).to receive(:open_uri_original) { |*a,&b| sleep rand; OpenURI.open_uri_original__ *a, &b }
         ts = []
         Thread.abort_on_exception = true

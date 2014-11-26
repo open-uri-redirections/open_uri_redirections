@@ -17,12 +17,7 @@ module OpenURI
     alias_method :redirectable_cautious?, :redirectable?
 
     def redirectable?(uri1, uri2)
-      allow_redirections = Thread.current[:__open_uri_redirections__]
-
-      # clear to prevent leaking (e.g. to block)
-      Thread.current[:__open_uri_redirections__] = nil
-
-      case allow_redirections
+      case Thread.current[:__open_uri_redirections__]
       when :safe
         redirectable_safe? uri1, uri2
       when :all
@@ -51,10 +46,14 @@ module OpenURI
     allow_redirections = options.delete :allow_redirections if options
     Thread.current[:__open_uri_redirections__] = allow_redirections
 
+    block2 = lambda { |io|
+      Thread.current[:__open_uri_redirections__] = nil
+      block[io]
+    }
+
     begin
-      self.open_uri_original name, *rest, &block
+      self.open_uri_original name, *rest, &(block ? block2 : nil)
     ensure
-      # clear (redirectable? might not be called due to an exception)
       Thread.current[:__open_uri_redirections__] = nil
     end
   end
