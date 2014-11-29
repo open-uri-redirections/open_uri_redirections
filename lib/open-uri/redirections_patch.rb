@@ -1,4 +1,7 @@
-# Patch to allow open-uri to follow safe (http to https) and unsafe redirections (https to http).
+#####
+# Patch to allow open-uri to follow safe (http to https)
+# and unsafe redirections (https to http).
+#
 # Original gist URL:
 # https://gist.github.com/1271420
 #
@@ -10,7 +13,7 @@
 #
 # Thread-safe implementation adapted from:
 # https://github.com/obfusk/open_uri_w_redirect_to_https
-
+#
 module OpenURI
   class <<self
     alias_method :open_uri_original, :open_uri
@@ -28,31 +31,37 @@ module OpenURI
     end
 
     def redirectable_safe?(uri1, uri2)
-      redirectable_cautious?(uri1, uri2) || (uri1.scheme.downcase == "http" && uri2.scheme.downcase == "https")
+      redirectable_cautious?(uri1, uri2) || http_to_https?(uri1, uri2)
     end
 
     def redirectable_all?(uri1, uri2)
-      redirectable_safe?(uri1, uri2) || (uri1.scheme.downcase == "https" && uri2.scheme.downcase == "http")
+      redirectable_safe?(uri1, uri2) || https_to_http?(uri1, uri2)
     end
   end
 
-  # Patches the original open_uri method to accept the :allow_redirections option
+  #####
+  # Patches the original open_uri method, so that it accepts the
+  # :allow_redirections argument with these options:
   #
-  # :allow_redirections => :safe will allow HTTP => HTTPS redirections.
-  # :allow_redirections => :all  will allow HTTP => HTTPS and HTTPS => HTTP redirections.
+  #   * :safe will allow HTTP => HTTPS redirections.
+  #   * :all  will allow HTTP => HTTPS and HTTPS => HTTP redirections.
+  #
+  # OpenURI::open can receive different kinds of arguments, like a string for
+  # the mode or an integer for the permissions, and then a hash with options
+  # like UserAgent, etc.
+  #
+  # To find the :allow_redirections option, we look for this options hash.
   #
   def self.open_uri(name, *rest, &block)
-    options = self.first_hash_argument(rest)
-    allow_redirections = options.delete :allow_redirections if options
-    Thread.current[:__open_uri_redirections__] = allow_redirections
+    Thread.current[:__open_uri_redirections__] = allow_redirections(rest)
 
-    block2 = lambda { |io|
+    block2 = lambda do |io|
       Thread.current[:__open_uri_redirections__] = nil
       block[io]
-    }
+    end
 
     begin
-      self.open_uri_original name, *rest, &(block ? block2 : nil)
+      open_uri_original name, *rest, &(block ? block2 : nil)
     ensure
       Thread.current[:__open_uri_redirections__] = nil
     end
@@ -60,12 +69,24 @@ module OpenURI
 
   private
 
-  # OpenURI::open can receive different kinds of arguments, like a string for the mode
-  # or an integer for the permissions, and then a hash with options like UserAgent, etc.
-  #
-  # This method helps us find this options hash, as it is where our :allow_redirections
-  # option will reside.
+  def self.allow_redirections(args)
+    options = first_hash_argument(args)
+    options.delete :allow_redirections if options
+  end
+
   def self.first_hash_argument(arguments)
-    arguments.select {|arg| Hash === arg}.first
+    arguments.select { |arg| arg.is_a? Hash }.first
+  end
+
+  def self.http_to_https?(uri1, uri2)
+    schemes_from([uri1, uri2]) == %w(http https)
+  end
+
+  def self.https_to_http?(uri1, uri2)
+    schemes_from([uri1, uri2]) == %w(https http)
+  end
+
+  def self.schemes_from(uris)
+    uris.map { |u| u.scheme.downcase }
   end
 end

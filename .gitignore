@@ -6,6 +6,7 @@
 .rvmrc
 .ruby-gemset
 .ruby-version
+.rubocop.yml
 Gemfile.lock
 InstalledFiles
 _yardoc
