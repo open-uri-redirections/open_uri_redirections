@@ -1,4 +1,4 @@
-# OpenUriRedirections [![Build Status](https://secure.travis-ci.org/jaimeiniesta/open_uri_redirections.png)](http://travis-ci.org/jaimeiniesta/open_uri_redirections) [![Dependency Status](https://gemnasium.com/jaimeiniesta/open_uri_redirections.png)](https://gemnasium.com/jaimeiniesta/open_uri_redirections)
+# OpenUriRedirections [![Build Status](https://secure.travis-ci.org/open-uri-redirections/open_uri_redirections.png)](http://travis-ci.org/open-uri-redirections/open_uri_redirections) [![Dependency Status](https://gemnasium.com/open-uri-redirections/open_uri_redirections.png)](https://gemnasium.com/open-uri-redirections/open_uri_redirections)  [![Code Climate](https://codeclimate.com/github/open-uri-redirections/open_uri_redirections/badges/gpa.svg)](https://codeclimate.com/github/open-uri-redirections/open_uri_redirections)
 
 This gem applies a patch to OpenURI to optionally allow redirections from HTTP to HTTPS, or from HTTPS to HTTP.
 
