@@ -2,6 +2,8 @@
 
 This gem applies a patch to OpenURI to optionally allow redirections from HTTP to HTTPS, or from HTTPS to HTTP.
 
+**UPDATE 2019: HTTP to HTTPS is supported by native `open-uri` by default from Ruby 2.4**.
+
 This is based on [this patch](http://bugs.ruby-lang.org/issues/859) and [this gem](https://github.com/obfusk/open_uri_w_redirect_to_https), and modified to allow redirections in both directions.
 
 Here is the problem it tries to solve:
